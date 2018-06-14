@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+[% data %]
+        ]);
+
+        var options = {
+          title: 'Monthly Dance Attendance - [% dance_type %] [% IF smoothed %](smoothed)[% END %]',
+          hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+          vAxis: {minValue: 0},
+        //};
+        //var options_fullStacked = {
+          //isStacked: 'relative',
+          isStacked: true,
+          height: 300,
+          //curveType: 'function',
+          vAxis: {
+            minValue: 0
+         //   ticks: [0, .3, .6, .9, 1]
+          }
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('chart1_div'));
+        chart.draw(data, options);
+        var chart2 = new google.visualization.AreaChart(document.getElementById('chart2_div'));
+        options.isStacked = 'relative';
+        options.title = 'Monthly Series Attendance - [% dance_type %][% IF smoothed %] (smoothed)[% END %] relative/proportional';
+        chart2.draw(data, options);
+      }
+    </script>
+	<title>[% dance_type %][% IF smoothed %] (smoothed)[% END %]</title>
+  </head>
+  <body>
+	<h2>[% dance_type %][% IF smoothed %] (smoothed)[% END %]</h2>
+    <div id="chart1_div" style="width: 100%; height: 300px;"></div>
+    <div id="chart2_div" style="width: 100%; height: 300px;"></div>
+  </body>
+</html>
