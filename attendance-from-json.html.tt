@@ -1,0 +1,157 @@
+<html>
+  <head>
+    <style>
+        .control {
+            width: 20em;
+            height: 2em;;
+            border: 1px solid black;
+            float: left;
+        }
+         .radio-div {
+            float: left;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        .cleardiv {
+            clear: both;
+        }
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+      var count = 
+        [% count %];
+      var isEnglish = 
+        [% is_english %];
+      var isContra = 
+        [% is_contra %];
+
+      var typeFilter = {};
+      var dataFilter;
+
+      var isSeries = Object.assign({}, isEnglish, isContra);
+
+      $(document).ready(function(){
+
+          $('#type-english').click(function() {
+              typeFilter = isEnglish;
+              calculateAndDraw();
+          });
+          $('#type-contra').click(function() {
+              typeFilter = isContra;
+              calculateAndDraw();
+          });
+          $('#type-all').click(function() {
+              typeFilter = isSeries;
+              calculateAndDraw();
+          });
+          $('#data-raw').click(function() {
+              dataFilter = function(row) { return row.raw }
+              calculateAndDraw();
+          });
+          $('#data-smooth').click(function() {
+              dataFilter = function(row) { return row.smooth }
+              calculateAndDraw();
+          });
+          typeFilter = isEnglish;
+          dataFilter = function(row) { return row.smooth };
+     });
+
+     function calculateAndDraw() {
+        var data = new google.visualization.DataTable();
+
+        data.addColumn('string', 'Date');
+
+        Object.keys(typeFilter).sort().forEach(function(colname) {
+            data.addColumn('number', colname);
+        });
+
+        var rows = [];
+        Object.keys(count).sort().forEach(function(date){
+            var rowForDate = [date];
+            Object.keys(typeFilter).sort().forEach(function(series){
+                var seriesData = count[date][series];
+                if (seriesData) {
+                    rowForDate.push(Math.trunc(dataFilter(seriesData)));
+                } else {
+                    rowForDate.push(null);
+                }
+            });
+            rows.push(rowForDate);
+        });
+        data.addRows(rows);
+        drawChart(data);
+    }
+
+
+    </script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(calculateAndDraw);
+
+
+      function drawChart(data) {
+
+        var options = {
+          title: 'Monthly Dance Attendance - [% dance_type %] [% IF smoothed %](smoothed)[% END %]',
+          hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+          vAxis: {minValue: 0},
+        //};
+        //var options_fullStacked = {
+          //isStacked: 'relative',
+          isStacked: true,
+          height: 300,
+          //curveType: 'function',
+          vAxis: {
+            minValue: 0
+         //   ticks: [0, .3, .6, .9, 1]
+          }
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('chart1_div'));
+        chart.draw(data, options);
+        var chart2 = new google.visualization.AreaChart(document.getElementById('chart2_div'));
+        options.isStacked = 'relative';
+        options.title = 'Monthly Series Attendance - [% dance_type %][% IF smoothed %] (smoothed)[% END %] relative/proportional';
+        chart2.draw(data, options);
+      }
+    </script>
+	<title>bacds attendance info</title>
+  </head>
+  <body>
+	<h2>bacds attendance info</h2>
+    <div class="control">
+        <div class="radio-div">
+            <input type="radio" id="type-english" name="dance-type" checked />
+            <label for="english">English</label>
+        </div>
+
+        <div class="radio-div">
+            <input type="radio" id="type-contra" name="dance-type" />
+            <label for="contra">Contra</label>
+        </div>
+        <div class="radio-div">
+            <input type="radio" id="type-all" name="dance-type" />
+            <label for="contra">All</label>
+        </div>
+
+    </div>
+    <div class="control">
+        <div class="radio-div">
+            <input type="radio" id="data-smooth" name="data-type" checked />
+            <label for="smooth">smooth</label>
+        </div>
+
+        <div class="radio-div">
+            <input type="radio" id="data-raw" name="data-type" />
+            <label for="raw">raw</label>
+        </div>
+
+
+    </div>
+    <div class="cleardiv"><hr></div>
+    <div id="chart1_div" style="width: 100%; height: 300px;"></div>
+    <div id="chart2_div" style="width: 100%; height: 300px;"></div>
+  </body>
+</html>
