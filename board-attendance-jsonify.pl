@@ -13,7 +13,7 @@ use JSON;
 my %Is_English = (
     BSE => 1,
     BWE => 1,
-    FSJ => 1,
+    FSJ => 1, # Both? San Jose, possibly in its community dance incarnation.  I’d have to look at the dates
     PAE => 1,
     PENE => 1,
     SFE => 1,
@@ -21,7 +21,7 @@ my %Is_English = (
 );
 
 my %Is_Contra = (
-    BFC => 1,
+    BFC => 1, # 	Berkeley Friday Contra - Kirston’s dance
     BWC => 1,
     HAY => 1,
     PAC => 1,
@@ -29,20 +29,21 @@ my %Is_Contra = (
     SFC => 1,
     SJC => 1,
 );
+
+# not included:
 #  15 NSB
 #   8 CW
-#  12 HD
-#  13 NYE
+#  12 HD	Halloween Dance - a special Palo Alto contra
+#  13 NYE	New Years Eve
 #  20 SPE
-#  32 ECS
-#  41 PB
-#  46 AEW
-#  54 BCEI
+#  32 ECS	El Cerrito Square Dance
+#  41 PB   Playford Ball
+#  46 AEW   Advanced English Workshop - once a regular pre-dance event
+#  54 BCEI	Berkeley Ceilidh
 #  59 BCP
 
 
 
-# Read whole file in memory
 my $aoa = csv (in => \*DATA, headers => 'auto'); # as array of array
 
 my ($count, $dances_seen) = process_data($aoa);
